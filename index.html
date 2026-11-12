@@ -76,11 +76,9 @@
             <button id="tab-kolay" onclick="setDifficulty('kolay')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4">Kolay</button>
             <button id="tab-orta" onclick="setDifficulty('orta')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4 flex justify-center items-center gap-1.5 relative group">
                 Orta <span id="lock-orta" class="text-xs">🔒</span>
-                <div id="tooltip-orta" class="absolute -bottom-8 text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg pointer-events-none">100 Doğru Gerekli</div>
             </button>
             <button id="tab-zor" onclick="setDifficulty('zor')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4 flex justify-center items-center gap-1.5 relative group">
                 Zor <span id="lock-zor" class="text-xs">🔒</span>
-                <div id="tooltip-zor" class="absolute -bottom-8 text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg pointer-events-none">200 Doğru Gerekli</div>
             </button>
         </div>
         <!-- Main Content Area -->
@@ -292,9 +290,8 @@
                 tabActive: '#722F37', tabInactive: '#a0a0a0', textMain: '#E0E0E0', 
                 badgeBg: '#262626', badgeText: '#fca5a5', badgeBorder: 'rgba(127, 29, 29, 0.4)',
                 btnBg: '#262626', btnBorder: '#404040', btnText: '#E0E0E0', 
-                btnHoverBg: '#2D2D2D', btnHoverBorder: '#722F37', pillBg: '#333333',
-                nextBg: '#722F37', nextHover: '#85363F', nextText: '#ffffff',
-                tooltipBg: '#262626', tooltipBorder: '#404040', tooltipText: '#ffffff'
+                btnHoverBg: '#2D2D2D', pillBg: '#333333',
+                nextBg: '#722F37', nextText: '#ffffff'
             },
             yesil: {
                 bg: '#090D0B', card: '#121A16', headerBg: '#065F46', headerText: '#ffffff', subText: '#A7F3D0',
@@ -302,9 +299,8 @@
                 tabActive: '#065F46', tabInactive: '#8A9A93', textMain: '#E2E8F0', 
                 badgeBg: '#1A2E26', badgeText: '#6EE7B7', badgeBorder: 'rgba(6, 95, 70, 0.4)',
                 btnBg: '#1A2E26', btnBorder: '#23382F', btnText: '#E2E8F0', 
-                btnHoverBg: '#22382F', btnHoverBorder: '#065F46', pillBg: '#23382F',
-                nextBg: '#065F46', nextHover: '#047857', nextText: '#ffffff',
-                tooltipBg: '#121A16', tooltipBorder: '#23382F', tooltipText: '#ffffff'
+                btnHoverBg: '#22382F', pillBg: '#23382F',
+                nextBg: '#065F46', nextText: '#ffffff'
             },
             mor: {
                 bg: '#0B0910', card: '#15121F', headerBg: '#5B21B6', headerText: '#ffffff', subText: '#DDD6FE',
@@ -312,9 +308,8 @@
                 tabActive: '#5B21B6', tabInactive: '#9CA3AF', textMain: '#F3F4F6', 
                 badgeBg: '#231D33', badgeText: '#C4B5FD', badgeBorder: 'rgba(91, 33, 182, 0.4)',
                 btnBg: '#231D33', btnBorder: '#31274A', btnText: '#F3F4F6', 
-                btnHoverBg: '#2D2342', btnHoverBorder: '#5B21B6', pillBg: '#31274A',
-                nextBg: '#5B21B6', nextHover: '#6D28D9', nextText: '#ffffff',
-                tooltipBg: '#15121F', tooltipBorder: '#31274A', tooltipText: '#ffffff'
+                btnHoverBg: '#2D2342', pillBg: '#31274A',
+                nextBg: '#5B21B6', nextText: '#ffffff'
             },
             bebek: {
                 bg: '#E0F2FE', card: '#FFFFFF', headerBg: '#1E3A8A', headerText: '#ffffff', subText: '#bae6fd',
@@ -322,9 +317,8 @@
                 tabActive: '#1E3A8A', tabInactive: '#0369a1', textMain: '#0f172a', 
                 badgeBg: '#f0f9ff', badgeText: '#1e40af', badgeBorder: '#bae6fd',
                 btnBg: '#f0f9ff', btnBorder: '#bae6fd', btnText: '#0f172a', 
-                btnHoverBg: '#e0f2fe', btnHoverBorder: '#1E3A8A', pillBg: '#bae6fd',
-                nextBg: '#1E3A8A', nextHover: '#1d4ed8', nextText: '#ffffff',
-                tooltipBg: '#0f172a', tooltipBorder: '#1e40af', tooltipText: '#ffffff'
+                btnHoverBg: '#e0f2fe', pillBg: '#bae6fd',
+                nextBg: '#1E3A8A', nextText: '#ffffff'
             },
             papatya: {
                 bg: '#FEF3C7', card: '#FFFFFF', headerBg: '#78350F', headerText: '#ffffff', subText: '#fde68a',
@@ -332,9 +326,8 @@
                 tabActive: '#78350F', tabInactive: '#b45309', textMain: '#451a03', 
                 badgeBg: '#fffbeb', badgeText: '#78350F', badgeBorder: '#fde68a',
                 btnBg: '#fffbeb', btnBorder: '#fde68a', btnText: '#451a03', 
-                btnHoverBg: '#fef3c7', btnHoverBorder: '#78350F', pillBg: '#fde68a',
-                nextBg: '#78350F', nextHover: '#92400e', nextText: '#ffffff',
-                tooltipBg: '#451a03', tooltipBorder: '#78350F', tooltipText: '#ffffff'
+                btnHoverBg: '#fef3c7', pillBg: '#fde68a',
+                nextBg: '#78350F', nextText: '#ffffff'
             },
             nane: {
                 bg: '#ECFDF5', card: '#FFFFFF', headerBg: '#047857', headerText: '#ffffff', subText: '#a7f3d0',
@@ -342,9 +335,8 @@
                 tabActive: '#047857', tabInactive: '#059669', textMain: '#064e3b', 
                 badgeBg: '#f0fdf4', badgeText: '#064e3b', badgeBorder: '#a7f3d0',
                 btnBg: '#f0fdf4', btnBorder: '#a7f3d0', btnText: '#064e3b', 
-                btnHoverBg: '#ecfdf5', btnHoverBorder: '#047857', pillBg: '#a7f3d0',
-                nextBg: '#047857', nextHover: '#059669', nextText: '#ffffff',
-                tooltipBg: '#064e3b', tooltipBorder: '#047857', tooltipText: '#ffffff'
+                btnHoverBg: '#ecfdf5', pillBg: '#a7f3d0',
+                nextBg: '#047857', nextText: '#ffffff'
             }
         };
 
@@ -393,9 +385,11 @@
 
             ['modalContent', 'noteModalContent'].forEach(id => {
                 let el = document.getElementById(id);
-                el.style.backgroundColor = t.card;
-                el.style.borderColor = t.btnBorder;
-                el.style.color = t.textMain;
+                if (el) {
+                    el.style.backgroundColor = t.card;
+                    el.style.borderColor = t.btnBorder;
+                    el.style.color = t.textMain;
+                }
             });
 
             updateUI();
@@ -472,4 +466,229 @@
                         : "💪 Hiç sorun değil, üst üste deneyerek öğreneceğiz. Pes etmek yok!";
                     rateColor = "text-amber-500 font-bold";
                 } else if (rate < 80) {
-                    encouragement = "👍 Gidişat gayet iyi, biraz daha dikkat
+                    encouragement = "👍 Gidişat gayet iyi, biraz daha dikkatle mükemmel olacaksın!";
+                } else {
+                    encouragement = "🔥 Harika gidiyorsun! Bu konuyu kaptın bile.";
+                }
+
+                let div = document.createElement('div');
+                div.className = "p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col gap-1.5";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center font-semibold">
+                        <span>${cat}</span>
+                        <span class="${rateColor}">${total > 0 ? rate + '%' : 'Veri Yok'} (${data.correct} Doğru / ${data.wrong} Yanlış)</span>
+                    </div>
+                    <div class="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 transition-all duration-500" style="width: ${total > 0 ? rate : 0}%"></div>
+                    </div>
+                    <p class="text-xs opacity-90 mt-1 italic">${encouragement}</p>
+                `;
+                body.appendChild(div);
+            }
+        }
+
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function gcd(a, b) { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+
+        function genKolay() {
+            let a = getRandomInt(-20, 20), b = getRandomInt(-20, 20), add = Math.random() > 0.5;
+            let bStr = b < 0 ? `(${b})` : b, aStr = a < 0 ? `(${a})` : a;
+            return add ? { category: "Temel İşlemler", question: `${aStr} + ${bStr}`, answer: a + b, explanation: "Sayıları toplarken işaretlere dikkat etmelisin." }
+                       : { category: "Temel İşlemler", question: `${aStr} - ${bStr}`, answer: a - b, explanation: "Çıkarma işleminde eksi yan yana gelirse artıya dönüşür." };
+        }
+
+        function genOrta() {
+            if (Math.random() > 0.5) {
+                let a = getRandomInt(2, 9), b = getRandomInt(2, 9), c = getRandomInt(2, 9), add = Math.random() > 0.5;
+                return { category: "İşlem Önceliği", question: `${a} ${add ? '+' : '-'} ${b} x ${c}`, answer: add ? a + (b * c) : a - (b * c), explanation: "Önce her zaman çarpma veya bölme işlemi yapılır!" };
+            } else {
+                let a = getRandomInt(1, 20), b = getRandomInt(10, 40), plus = Math.random() > 0.5;
+                return { category: "Basit Denklemler", question: `x ${plus ? '+' : '-'} ${a} = ${b}`, answer: plus ? b - a : b + a, explanation: "x'i yalnız bırakmak için sayıyı karşı tarafa işaret değiştirerek at." };
+            }
+        }
+
+        function genZor() {
+            let denom = getRandomInt(3, 10), n1 = getRandomInt(1, 9), n2 = getRandomInt(1, 9), add = Math.random() > 0.5;
+            let ansNum = add ? n1 + n2 : n1 - n2;
+            let ansStr = `${ansNum}/${denom}`;
+            let g = gcd(ansNum, denom);
+            if (g === denom) ansStr = `${ansNum / denom}`;
+            else if (g > 1) ansStr = `${ansNum / g}/${denom / g}`;
+            return { category: "Ortak Paydalı Kesirler", question: `${n1}/${denom} ${add ? '+' : '-'} ${n2}/${denom}`, answer: ansStr, explanation: "Paydalar aynıysa alt taraf aynen yazılır, üstler toplanır veya çıkarılır." };
+        }
+
+        function generateOptions(correctAnswer) {
+            let opts = new Set([correctAnswer]);
+            if (typeof correctAnswer === 'string' && correctAnswer.includes('/')) {
+                let p = correctAnswer.split('/'), num = parseInt(p[0]), den = parseInt(p[1]);
+                opts.add(`${num}/${den * 2}`);
+                if (num > 0) opts.add(`-${num}/${den}`);
+                while (opts.size < 4) opts.add(`${num + getRandomInt(-2, 2)}/${den}`);
+            } else {
+                if (correctAnswer !== 0) opts.add(-correctAnswer);
+                while (opts.size < 4) opts.add(correctAnswer + getRandomInt(1, 5) * (Math.random() > 0.5 ? 1 : -1));
+            }
+            let fallback = 1;
+            while(opts.size < 4) opts.add(`Hata_${fallback++}`);
+            return Array.from(opts).sort(() => Math.random() - 0.5);
+        }
+
+        function initApp() {
+            applyTheme();
+            setupSurpriseNote();
+            document.getElementById('scoreDisplay').innerText = currentScore;
+            updateUI();
+            
+            if (!currentQuestion) {
+                loadQuestion();
+            } else {
+                document.getElementById('categoryBadge').innerText = currentQuestion.category;
+                document.getElementById('questionText').innerText = currentQuestion.question;
+                renderOptions(currentQuestion);
+            }
+        }
+
+        function updateUI() {
+            let t = themes[currentTheme] || themes.bordo;
+            let lOrta = document.getElementById('lock-orta');
+            let lZor = document.getElementById('lock-zor');
+            
+            lOrta.classList.toggle('hidden', currentScore >= 100);
+            document.getElementById('tab-orta').classList.toggle('opacity-75', currentScore < 100);
+            lZor.classList.toggle('hidden', currentScore >= 200);
+            document.getElementById('tab-zor').classList.toggle('opacity-75', currentScore < 200);
+
+            ['kolay', 'orta', 'zor'].forEach(d => {
+                let btn = document.getElementById(`tab-${d}`);
+                if (d === currentDifficulty) {
+                    btn.style.borderBottomColor = t.headerBg;
+                    btn.style.color = t.textMain;
+                    btn.style.fontWeight = 'bold';
+                } else {
+                    btn.style.borderBottomColor = 'transparent';
+                    btn.style.color = t.tabInactive;
+                    btn.style.fontWeight = '600';
+                }
+            });
+        }
+
+        function setDifficulty(level) {
+            if (level === 'orta' && currentScore < 100) return alert("Bu seviye için 100 Doğruya ulaşmalısın! 🌸");
+            if (level === 'zor' && currentScore < 200) return alert("Bu seviye için 200 Doğruya ulaşmalısın! 💪");
+            currentDifficulty = level;
+            memory.save('gulsen_diff', level);
+            updateUI();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            let fa = document.getElementById('feedbackArea');
+            fa.classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            if (currentDifficulty === 'kolay') currentQuestion = genKolay();
+            else if (currentDifficulty === 'orta') currentQuestion = genOrta();
+            else if (currentDifficulty === 'zor') currentQuestion = genZor();
+
+            memory.save('gulsen_last_question', currentQuestion);
+
+            document.getElementById('categoryBadge').innerText = currentQuestion.category;
+            document.getElementById('questionText').innerText = currentQuestion.question;
+
+            renderOptions(currentQuestion);
+        }
+
+        function renderOptions(q) {
+            let t = themes[currentTheme] || themes.bordo;
+            const options = generateOptions(q.answer);
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full border-2 font-semibold py-4 px-5 rounded-2xl flex items-center transition-all duration-200 text-lg shadow-sm group';
+                btn.style.backgroundColor = t.btnBg;
+                btn.style.borderColor = t.btnBorder;
+                btn.style.color = t.btnText;
+
+                btn.onmouseover = () => { btn.style.backgroundColor = t.btnHoverBg; btn.style.borderColor = t.headerBg; };
+                btn.onmouseout = () => { btn.style.backgroundColor = t.btnBg; btn.style.borderColor = t.btnBorder; };
+
+                btn.innerHTML = `
+                    <span class="rounded-full w-9 h-9 flex items-center justify-center mr-4 font-bold transition-colors" style="background-color: ${t.pillBg}; color: ${t.badgeText};">${labels[index]}</span> 
+                    <span class="flex-1 text-left">${opt}</span>
+                `;
+                btn.onclick = () => handleAnswer(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedAnswer, clickedBtn) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = (String(selectedAnswer) === String(currentQuestion.answer));
+            const cat = currentQuestion.category;
+            const durumStr = isCorrect ? "Doğru" : "Yanlış";
+
+            if (!stats[cat]) stats[cat] = { correct: 0, wrong: 0 };
+            if (isCorrect) {
+                stats[cat].correct++;
+                currentScore++;
+                memory.save('gulsen_score_shared', currentScore);
+                document.getElementById('scoreDisplay').innerText = currentScore;
+                updateUI();
+            } else {
+                stats[cat].wrong++;
+            }
+            memory.save('gulsen_stats', stats);
+
+            recordDailyActivity();
+            sendDataToSheet(cat, durumStr, currentDifficulty, currentScore);
+
+            const allBtns = document.querySelectorAll('#optionsContainer button');
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.onmouseover = null; btn.onmouseout = null;
+                const btnText = btn.querySelectorAll('span')[1].innerText;
+                if (String(btnText) === String(currentQuestion.answer)) {
+                    btn.style.borderColor = '#16a34a'; btn.style.backgroundColor = 'rgba(22, 163, 74, 0.2)'; btn.style.color = '#86efac';
+                    btn.querySelectorAll('span')[0].style.backgroundColor = '#16a34a'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
+                } else if (btn === clickedBtn && !isCorrect) {
+                    btn.style.borderColor = '#d97706'; btn.style.backgroundColor = 'rgba(217, 119, 6, 0.2)'; btn.style.color = '#fde047';
+                    btn.querySelectorAll('span')[0].style.backgroundColor = '#d97706'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
+                } else {
+                    btn.style.opacity = '0.4';
+                }
+            });
+
+            let fa = document.getElementById('feedbackArea');
+            fa.classList.remove('hidden');
+
+            if (isCorrect) {
+                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-emerald-950/40 text-emerald-200 border-emerald-600 success-pop";
+                document.getElementById('feedbackIcon').innerText = "🎉";
+                document.getElementById('feedbackTitle').innerText = "Harika! Doğru Yaptın.";
+                document.getElementById('feedbackMessage').innerText = currentQuestion.explanation;
+
+                setTimeout(() => {
+                    loadQuestion();
+                }, 2500);
+            } else {
+                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-amber-950/40 text-amber-200 border-amber-600 fade-in";
+                document.getElementById('feedbackIcon').innerText = "💡";
+                document.getElementById('feedbackTitle').innerText = "💪 Küçük bir hata oldu, sorun değil!";
+                document.getElementById('feedbackMessage').innerHTML = `Doğru cevap <b>${currentQuestion.answer}</b> olmalıydı.<br><br><b>Unutma ki:</b> ` + currentQuestion.explanation;
+            }
+
+            document.getElementById('nextBtn').onclick = () => loadQuestion();
+            document.getElementById('nextBtn').classList.add('fade-in');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
