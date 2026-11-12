@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gülse'nin Soru Bahçesi</title>
+    <title>Gülse'nin Soru Bahçesi 🌸</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -20,8 +20,7 @@
     </style>
 </head>
 <body id="pageBody" class="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4">
-
-    <!-- Gizli Veri Gönderim Formu ve Iframe (CORS ve Iframe Engelini Aşmak İçin) -->
+    <!-- Gizli Veri Gönderim Formu ve Iframe -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
     <form id="sheetForm" action="https://script.google.com/macros/s/AKfycbxJY8XCu5fOOamo25oO5gqbtTruwonV88kh0SnLH4ZRtORxIfP87Nft00al856x6G-k/exec" method="POST" target="hidden_iframe" style="display:none;">
         <input type="hidden" name="action" value="saveBatch">
@@ -33,21 +32,25 @@
         <input type="hidden" name="dogruSayisi" id="form_dogruSayisi">
     </form>
 
-    <!-- Bulut durumunu Google E-Tablolar'a kaydetmek için ayrı form -->
-
-
     <div id="mainContainer" class="w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300">
-        
         <!-- Header & Theme Selector Bar -->
         <div id="headerBox" class="p-5 text-white flex flex-col gap-3 shadow-md z-10 relative">
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold tracking-wide">Gülse'nin Soru Bahçesi 🌸</h1>
-                    <p id="subTitle" class="text-xs sm:text-sm mt-1 opacity-90">YKS Hedefine Adım Adım</p>
+                    <p id="subTitle" class="text-xs sm:text-sm mt-1 opacity-90 flex items-center justify-between gap-2">
+                        <span>YKS Hedefine Adım Adım</span>
+                        <span id="streakBadge" class="bg-black/30 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border border-white/20">🔥 1 Günlük Seri</span>
+                    </p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <!-- Analiz Butonu -->
-                    <button onclick="toggleStatsModal()" title="İstatistikler & Analiz" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/45 transition shadow-sm border border-white/20">
+                <div class="flex items-center gap-1.5">
+                    <!-- Sürpriz Not Butonu -->
+                    <button onclick="toggleNoteModal()" title="Sürpriz Not 💌" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/45 transition shadow-sm border border-white/20 relative">
+                        💌
+                        <span id="noteDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <!-- Haftalık İstatistik & Analiz Butonu -->
+                    <button onclick="toggleStatsModal()" title="Haftalık İstatistikler & Analiz" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/45 transition shadow-sm border border-white/20">
                         📊
                     </button>
                     <!-- Doğru Sayısı Kutusu -->
@@ -57,7 +60,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Emojili Tema Seçim Butonları -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar justify-center sm:justify-start">
                 <span class="text-[11px] font-medium opacity-80 whitespace-nowrap mr-1">Tema:</span>
@@ -69,7 +71,6 @@
                 <button onclick="setTheme('nane')" title="Nane Yeşili" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🍃</button>
             </div>
         </div>
-
         <!-- Difficulty Menu -->
         <div id="menuBox" class="flex text-sm sm:text-base font-semibold shadow-inner border-b">
             <button id="tab-kolay" onclick="setDifficulty('kolay')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4">Kolay</button>
@@ -82,31 +83,25 @@
                 <div id="tooltip-zor" class="absolute -bottom-8 text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg pointer-events-none">200 Doğru Gerekli</div>
             </button>
         </div>
-
         <!-- Main Content Area -->
         <div id="contentBox" class="p-5 sm:p-6 flex-1 flex flex-col relative">
-            
             <div class="flex justify-center mb-5">
                 <span id="categoryBadge" class="text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
                     Kategori
                 </span>
             </div>
-
             <!-- Question Display -->
             <div class="flex-1 flex items-center justify-center mb-6 min-h-[100px]">
                 <h2 id="questionText" class="text-3xl sm:text-4xl font-bold text-center tracking-wide drop-shadow-sm"></h2>
             </div>
-
             <!-- Options Grid -->
             <div id="optionsContainer" class="grid grid-cols-1 gap-3 mb-4"></div>
-
             <!-- Feedback Area -->
             <div id="feedbackArea" class="hidden rounded-2xl p-4 sm:p-5 mb-4 text-center shadow-inner border">
                 <div id="feedbackIcon" class="text-3xl mb-1 drop-shadow-md"></div>
                 <h3 id="feedbackTitle" class="font-bold text-lg mb-1"></h3>
                 <p id="feedbackMessage" class="text-sm sm:text-base leading-relaxed"></p>
             </div>
-
             <!-- Next Button -->
             <button id="nextBtn" onclick="loadQuestion()" class="hidden w-full font-bold py-4 rounded-xl shadow-lg transition-transform transform active:scale-95 text-lg">
                 Sonraki Soruya Geç ➡️
@@ -114,18 +109,26 @@
         </div>
     </div>
 
-    <!-- İstatistik & Analiz Modalı -->
+    <!-- Sürpriz Not Modalı -->
+    <div id="noteModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
+        <div id="noteModalContent" class="w-full max-w-sm rounded-3xl p-6 shadow-2xl border flex flex-col gap-4 text-center success-pop">
+            <div class="text-4xl">💌</div>
+            <h2 id="secretNoteTitle" class="text-lg font-bold">Günün Sürpriz Notu</h2>
+            <div id="secretNoteText" class="p-4 rounded-2xl bg-black/10 dark:bg-white/10 text-sm sm:text-base leading-relaxed font-medium italic"></div>
+            <button onclick="closeNoteModal()" class="w-full py-3 rounded-xl font-bold text-white transition shadow-md" style="background-color: var(--header-bg, #722F37);">
+                Kalbe Yazıldı, Devam Et 🥰
+            </button>
+        </div>
+    </div>
+
+    <!-- Haftalık İstatistik & Analiz Modalı -->
     <div id="statsModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
         <div id="modalContent" class="w-full max-w-md rounded-3xl p-6 shadow-2xl border flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="text-lg font-bold flex items-center gap-2">📊 Gülse'nin Performans Analizi</h2>
+                <h2 class="text-lg font-bold flex items-center gap-2">📊 Haftalık Performans Analizi</h2>
                 <button onclick="toggleStatsModal()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/10 font-bold hover:bg-black/20 transition">✕</button>
             </div>
-            
-            <div id="statsBody" class="flex flex-col gap-4 text-sm">
-                <!-- İçerik -->
-            </div>
-
+            <div id="statsBody" class="flex flex-col gap-4 text-sm"></div>
             <button onclick="toggleStatsModal()" class="w-full py-3 rounded-xl font-bold text-white transition shadow-md" style="background-color: var(--header-bg, #722F37);">
                 Çalışmaya Devam Et 💪
             </button>
@@ -133,8 +136,17 @@
     </div>
 
     <script>
-        // 30 cevap biriktir, tek istekte Google Sheets'e gönder.
-        // Bekleyen kayıtlar cihazda tutulur; sekme kapansa bile silinmez.
+        // =========================================================================
+        // 💌 MESAJ BIRAKMA ALANI:
+        // Yeni mesaj yazmak istediğinde sadece "mesaj"ı değiştir ve "id"yi artır
+        // (Örn: "not_02", "not_03"). Yeni id girdiğinde ekranında otomatik açılır.
+        // =========================================================================
+        const SURPRIZ_NOT = {
+            id: "not_01",
+            baslik: "Günün Sürpriz Notu",
+            mesaj: "Bugün de harika iş çıkarıyorsun meleğim. Birlikte başaracağız, pes etmek yok! ❤️"
+        };
+
         const BATCH_SIZE = 30;
         const QUEUE_KEY = 'gulsen_pending_answers_v1';
         let pendingAnswers = [];
@@ -164,14 +176,12 @@
             const form = document.getElementById('sheetForm');
             batchSending = true;
             document.getElementById('form_payload').value = JSON.stringify(batch);
-
             let timeout = setTimeout(() => finish(false), 20000);
             function finish(ok) {
                 if (!batchSending) return;
                 clearTimeout(timeout);
                 iframe.removeEventListener('load', onLoad);
                 if (ok) {
-                    // Sunucunun yanıtı iframe üzerinden okunamaz; load yalnızca teslim denemesini gösterir.
                     pendingAnswers.splice(0, batch.length);
                     persistPendingAnswers();
                 }
@@ -182,12 +192,9 @@
             iframe.addEventListener('load', onLoad);
             try { form.submit(); } catch(e) { finish(false); }
         }
-        // Önceki oturumdan kalan tam paketleri yeni açılışta tekrar dene.
+
         window.addEventListener('load', () => setTimeout(flushAnswerBatch, 1000));
         window.addEventListener('online', flushAnswerBatch);
-
-        // Her cihaz kendi tarayıcısında bağımsız ilerleme saklar.
-        // Google Sheets'e yalnızca soru çözüm olayları gönderilir.
 
         const memory = {
             data: {},
@@ -208,10 +215,67 @@
             }
         };
 
+        function setupSurpriseNote() {
+            document.getElementById('secretNoteTitle').innerText = SURPRIZ_NOT.baslik;
+            document.getElementById('secretNoteText').innerText = `"${SURPRIZ_NOT.mesaj}"`;
+            const seenId = memory.get('gulsen_seen_note_id', '');
+            if (seenId !== SURPRIZ_NOT.id) {
+                document.getElementById('noteDot').classList.remove('hidden');
+                document.getElementById('noteModal').classList.remove('hidden');
+            }
+        }
+
+        function toggleNoteModal() {
+            const modal = document.getElementById('noteModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('noteDot').classList.add('hidden');
+                memory.save('gulsen_seen_note_id', SURPRIZ_NOT.id);
+            }
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteModal').classList.add('hidden');
+            document.getElementById('noteDot').classList.add('hidden');
+            memory.save('gulsen_seen_note_id', SURPRIZ_NOT.id);
+        }
+
+        function recordDailyActivity() {
+            const todayKey = new Date().toISOString().slice(0, 10);
+            let weeklyData = memory.get('gulsen_weekly_activity', {});
+            weeklyData[todayKey] = (weeklyData[todayKey] || 0) + 1;
+            memory.save('gulsen_weekly_activity', weeklyData);
+        }
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            let lastActive = memory.get('gulsen_last_active_date', null);
+            let streak = memory.get('gulsen_streak', 1);
+
+            if (!lastActive) {
+                memory.save('gulsen_last_active_date', today);
+                memory.save('gulsen_streak', 1);
+                return 1;
+            }
+
+            const diffDays = Math.round((new Date(today) - new Date(lastActive)) / (1000 * 60 * 60 * 24));
+            if (diffDays === 1) {
+                streak++;
+                memory.save('gulsen_streak', streak);
+                memory.save('gulsen_last_active_date', today);
+            } else if (diffDays > 1) {
+                streak = 1;
+                memory.save('gulsen_streak', 1);
+                memory.save('gulsen_last_active_date', today);
+            }
+            return memory.get('gulsen_streak', 1);
+        }
+
         let currentScore = memory.get('gulsen_score_shared', 0);
         let currentDifficulty = memory.get('gulsen_diff', 'kolay'); 
         let currentTheme = memory.get('gulsen_theme', 'bordo');
         let currentQuestion = memory.get('gulsen_last_question', null);
+        let currentStreak = checkStreak();
         let isAnswered = false;
 
         let stats = memory.get('gulsen_stats', {
@@ -260,7 +324,7 @@
                 btnBg: '#f0f9ff', btnBorder: '#bae6fd', btnText: '#0f172a', 
                 btnHoverBg: '#e0f2fe', btnHoverBorder: '#1E3A8A', pillBg: '#bae6fd',
                 nextBg: '#1E3A8A', nextHover: '#1d4ed8', nextText: '#ffffff',
-                tooltipBg: '#0f172a', tooltipBorder: '#1e3a8a', tooltipText: '#ffffff'
+                tooltipBg: '#0f172a', tooltipBorder: '#1e40af', tooltipText: '#ffffff'
             },
             papatya: {
                 bg: '#FEF3C7', card: '#FFFFFF', headerBg: '#78350F', headerText: '#ffffff', subText: '#fde68a',
@@ -304,6 +368,7 @@
             header.style.backgroundColor = t.headerBg;
             header.style.color = t.headerText;
             document.getElementById('subTitle').style.color = t.subText;
+            document.getElementById('streakBadge').innerText = `🔥 ${currentStreak} Günlük Seri`;
 
             let scoreBox = document.getElementById('scoreBox');
             scoreBox.style.backgroundColor = t.scoreBg;
@@ -326,10 +391,12 @@
             nextBtn.style.backgroundColor = t.nextBg;
             nextBtn.style.color = t.nextText;
 
-            let modalContent = document.getElementById('modalContent');
-            modalContent.style.backgroundColor = t.card;
-            modalContent.style.borderColor = t.btnBorder;
-            modalContent.style.color = t.textMain;
+            ['modalContent', 'noteModalContent'].forEach(id => {
+                let el = document.getElementById(id);
+                el.style.backgroundColor = t.card;
+                el.style.borderColor = t.btnBorder;
+                el.style.color = t.textMain;
+            });
 
             updateUI();
         }
@@ -344,7 +411,49 @@
 
         function renderStatsContent() {
             let body = document.getElementById('statsBody');
-            body.innerHTML = '';
+            let weeklyData = memory.get('gulsen_weekly_activity', {});
+            let days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+            let today = new Date();
+            let chartHTML = '';
+            let maxVal = 1;
+
+            let last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                let d = new Date(today);
+                d.setDate(today.getDate() - i);
+                let dateKey = d.toISOString().slice(0, 10);
+                let count = weeklyData[dateKey] || 0;
+                if (count > maxVal) maxVal = count;
+                let dayName = days[(d.getDay() + 6) % 7];
+                last7Days.push({ dayName, count });
+            }
+
+            last7Days.forEach(item => {
+                let heightPercent = Math.max(Math.round((item.count / maxVal) * 100), 12);
+                chartHTML += `
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-mono opacity-80">${item.count}</span>
+                        <div class="w-full bg-emerald-500/20 rounded-t-lg h-24 flex items-end overflow-hidden">
+                            <div class="w-full bg-emerald-500 transition-all duration-500 rounded-t-lg" style="height: ${heightPercent}%"></div>
+                        </div>
+                        <span class="text-[11px] font-medium opacity-90">${item.dayName}</span>
+                    </div>
+                `;
+            });
+
+            body.innerHTML = `
+                <div class="p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex justify-between items-center font-bold">
+                    <span>🔥 Günlük Çalışma Serisi:</span>
+                    <span class="text-amber-500 text-lg">${currentStreak} Gün</span>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col gap-2">
+                    <div class="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">📈 Son 7 Günlük Soru Çözüm Grafiği</div>
+                    <div class="flex items-end gap-2 h-32 pt-2">
+                        ${chartHTML}
+                    </div>
+                </div>
+            `;
 
             for (let cat in stats) {
                 let data = stats[cat];
@@ -358,244 +467,9 @@
                     encouragement = "Henüz bu kategoride soru çözülmedi. Hadi başlayalım! 🌸";
                     rateColor = "text-gray-400";
                 } else if (rate < 60) {
-                    if (cat === "Temel İşlemler") {
-                        encouragement = "✨ Gülse moralini bozma geleceğimiz için yapabilirsin ❤️ Biraz daha pratikle halledeceğiz!";
-                    } else {
-                        encouragement = "💪 Hiç sorun değil, üst üste deneyerek öğreneceğiz. Pes etmek yok!";
-                    }
+                    encouragement = cat === "Temel İşlemler"
+                        ? "✨ Gülse moralini bozma geleceğimiz için yapabilirsin ❤️ Biraz daha pratikle halledeceğiz!"
+                        : "💪 Hiç sorun değil, üst üste deneyerek öğreneceğiz. Pes etmek yok!";
                     rateColor = "text-amber-500 font-bold";
                 } else if (rate < 80) {
-                    encouragement = "👍 Gidişat gayet iyi, biraz daha dikkatle mükemmel olacaksın!";
-                } else {
-                    encouragement = "🔥 Harika gidiyorsun! Bu konuyu kaptın bile.";
-                }
-
-                let div = document.createElement('div');
-                div.className = "p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col gap-1.5";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center font-semibold">
-                        <span>${cat}</span>
-                        <span class="${rateColor}">${total > 0 ? rate + '%' : 'Veri Yok'} (${data.correct} Doğru / ${data.wrong} Yanlış)</span>
-                    </div>
-                    <div class="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-                        <div class="h-full bg-emerald-500 transition-all duration-500" style="width: ${total > 0 ? rate : 0}%"></div>
-                    </div>
-                    <p class="text-xs opacity-90 mt-1 italic">${encouragement}</p>
-                `;
-                body.appendChild(div);
-            }
-        }
-
-        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        function gcd(a, b) { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
-
-        function genKolay() {
-            let a = getRandomInt(-20, 20), b = getRandomInt(-20, 20), add = Math.random() > 0.5;
-            let bStr = b < 0 ? `(${b})` : b, aStr = a < 0 ? `(${a})` : a;
-            return add ? { category: "Temel İşlemler", question: `${aStr} + ${bStr}`, answer: a + b, explanation: "Sayıları toplarken işaretlere dikkat etmelisin." }
-                       : { category: "Temel İşlemler", question: `${aStr} - ${bStr}`, answer: a - b, explanation: "Çıkarma işleminde eksi yan yana gelirse artıya dönüşür." };
-        }
-
-        function genOrta() {
-            if (Math.random() > 0.5) {
-                let a = getRandomInt(2, 9), b = getRandomInt(2, 9), c = getRandomInt(2, 9), add = Math.random() > 0.5;
-                return { category: "İşlem Önceliği", question: `${a} ${add ? '+' : '-'} ${b} x ${c}`, answer: add ? a + (b * c) : a - (b * c), explanation: "Önce her zaman çarpma veya bölme işlemi yapılır!" };
-            } else {
-                let a = getRandomInt(1, 20), b = getRandomInt(10, 40), plus = Math.random() > 0.5;
-                return { category: "Basit Denklemler", question: `x ${plus ? '+' : '-'} ${a} = ${b}`, answer: plus ? b - a : b + a, explanation: "x'i yalnız bırakmak için sayıyı karşı tarafa işaret değiştirerek at." };
-            }
-        }
-
-        function genZor() {
-            let denom = getRandomInt(3, 10), n1 = getRandomInt(1, 9), n2 = getRandomInt(1, 9), add = Math.random() > 0.5;
-            let ansNum = add ? n1 + n2 : n1 - n2;
-            let ansStr = `${ansNum}/${denom}`;
-            let g = gcd(ansNum, denom);
-            if (g === denom) ansStr = `${ansNum / denom}`;
-            else if (g > 1) ansStr = `${ansNum / g}/${denom / g}`;
-            return { category: "Ortak Paydalı Kesirler", question: `${n1}/${denom} ${add ? '+' : '-'} ${n2}/${denom}`, answer: ansStr, explanation: "Paydalar aynıysa alt taraf aynen yazılır, üstler toplanır veya çıkarılır." };
-        }
-
-        function generateOptions(correctAnswer) {
-            let opts = new Set([correctAnswer]);
-            if (typeof correctAnswer === 'string' && correctAnswer.includes('/')) {
-                let p = correctAnswer.split('/'), num = parseInt(p[0]), den = parseInt(p[1]);
-                opts.add(`${num}/${den * 2}`);
-                if (num > 0) opts.add(`-${num}/${den}`);
-                while (opts.size < 4) opts.add(`${num + getRandomInt(-2, 2)}/${den}`);
-            } else {
-                if (correctAnswer !== 0) opts.add(-correctAnswer);
-                while (opts.size < 4) opts.add(correctAnswer + getRandomInt(1, 5) * (Math.random() > 0.5 ? 1 : -1));
-            }
-            let fallback = 1;
-            while(opts.size < 4) opts.add(`Hata_${fallback++}`);
-            return Array.from(opts).sort(() => Math.random() - 0.5);
-        }
-
-        function initApp() {
-            applyTheme();
-            document.getElementById('scoreDisplay').innerText = currentScore;
-            updateUI();
-            
-            if (!currentQuestion) {
-                loadQuestion();
-            } else {
-                document.getElementById('categoryBadge').innerText = currentQuestion.category;
-                document.getElementById('questionText').innerText = currentQuestion.question;
-                renderOptions(currentQuestion);
-            }
-        }
-
-        function updateUI() {
-            let t = themes[currentTheme] || themes.bordo;
-            let lOrta = document.getElementById('lock-orta');
-            let lZor = document.getElementById('lock-zor');
-            
-            lOrta.classList.toggle('hidden', currentScore >= 100);
-            document.getElementById('tab-orta').classList.toggle('opacity-75', currentScore < 100);
-            lZor.classList.toggle('hidden', currentScore >= 200);
-            document.getElementById('tab-zor').classList.toggle('opacity-75', currentScore < 200);
-
-            ['kolay', 'orta', 'zor'].forEach(d => {
-                let btn = document.getElementById(`tab-${d}`);
-                if (d === currentDifficulty) {
-                    btn.style.borderBottomColor = t.headerBg;
-                    btn.style.color = t.textMain;
-                    btn.style.fontWeight = 'bold';
-                } else {
-                    btn.style.borderBottomColor = 'transparent';
-                    btn.style.color = t.tabInactive;
-                    btn.style.fontWeight = '600';
-                }
-            });
-
-            document.getElementById('tooltip-orta').style.backgroundColor = t.tooltipBg;
-            document.getElementById('tooltip-orta').style.borderColor = t.tooltipBorder;
-            document.getElementById('tooltip-orta').style.color = t.tooltipText;
-            document.getElementById('tooltip-zor').style.backgroundColor = t.tooltipBg;
-            document.getElementById('tooltip-zor').style.borderColor = t.tooltipBorder;
-            document.getElementById('tooltip-zor').style.color = t.tooltipText;
-        }
-
-        function setDifficulty(level) {
-            if (level === 'orta' && currentScore < 100) return alert("Bu seviye için 100 Doğruya ulaşmalısın! 🌸");
-            if (level === 'zor' && currentScore < 200) return alert("Bu seviye için 200 Doğruya ulaşmalısın! 💪");
-            currentDifficulty = level;
-            memory.save('gulsen_diff', level);
-            updateUI();
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            isAnswered = false;
-            let fa = document.getElementById('feedbackArea');
-            fa.classList.add('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
-
-            if (currentDifficulty === 'kolay') currentQuestion = genKolay();
-            else if (currentDifficulty === 'orta') currentQuestion = genOrta();
-            else if (currentDifficulty === 'zor') currentQuestion = genZor();
-
-            memory.save('gulsen_last_question', currentQuestion);
-
-            document.getElementById('categoryBadge').innerText = currentQuestion.category;
-            document.getElementById('questionText').innerText = currentQuestion.question;
-
-            renderOptions(currentQuestion);
-        }
-
-        function renderOptions(q) {
-            let t = themes[currentTheme] || themes.bordo;
-            const options = generateOptions(q.answer);
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-            const labels = ['A', 'B', 'C', 'D'];
-
-            options.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full border-2 font-semibold py-4 px-5 rounded-2xl flex items-center transition-all duration-200 text-lg shadow-sm group';
-                btn.style.backgroundColor = t.btnBg;
-                btn.style.borderColor = t.btnBorder;
-                btn.style.color = t.btnText;
-
-                btn.onmouseover = () => { btn.style.backgroundColor = t.btnHoverBg; btn.style.borderColor = t.headerBg; };
-                btn.onmouseout = () => { btn.style.backgroundColor = t.btnBg; btn.style.borderColor = t.btnBorder; };
-
-                btn.innerHTML = `
-                    <span class="rounded-full w-9 h-9 flex items-center justify-center mr-4 font-bold transition-colors" style="background-color: ${t.pillBg}; color: ${t.badgeText};">${labels[index]}</span> 
-                    <span class="flex-1 text-left">${opt}</span>
-                `;
-                btn.onclick = () => handleAnswer(opt, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function handleAnswer(selectedAnswer, clickedBtn) {
-            if (isAnswered) return;
-            isAnswered = true;
-
-            const isCorrect = (String(selectedAnswer) === String(currentQuestion.answer));
-            const cat = currentQuestion.category;
-            const durumStr = isCorrect ? "Doğru" : "Yanlış";
-
-            if (!stats[cat]) stats[cat] = { correct: 0, wrong: 0 };
-            if (isCorrect) {
-                stats[cat].correct++;
-                currentScore++;
-                memory.save('gulsen_score_shared', currentScore);
-                document.getElementById('scoreDisplay').innerText = currentScore;
-                updateUI();
-            } else {
-                stats[cat].wrong++;
-            }
-            memory.save('gulsen_stats', stats);
-
-            // Google E-Tabloya 30 cevapta bir toplu rapor gönderimi
-            sendDataToSheet(cat, durumStr, currentDifficulty, currentScore);
-
-            const allBtns = document.querySelectorAll('#optionsContainer button');
-            allBtns.forEach(btn => {
-                btn.disabled = true;
-                btn.onmouseover = null; btn.onmouseout = null;
-                const btnText = btn.querySelectorAll('span')[1].innerText;
-                if (String(btnText) === String(currentQuestion.answer)) {
-                    btn.style.borderColor = '#16a34a'; btn.style.backgroundColor = 'rgba(22, 163, 74, 0.2)'; btn.style.color = '#86efac';
-                    btn.querySelectorAll('span')[0].style.backgroundColor = '#16a34a'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
-                } else if (btn === clickedBtn && !isCorrect) {
-                    btn.style.borderColor = '#d97706'; btn.style.backgroundColor = 'rgba(217, 119, 6, 0.2)'; btn.style.color = '#fde047';
-                    btn.querySelectorAll('span')[0].style.backgroundColor = '#d97706'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
-                } else {
-                    btn.style.opacity = '0.4';
-                }
-            });
-
-            let fa = document.getElementById('feedbackArea');
-            fa.classList.remove('hidden');
-
-            if (isCorrect) {
-                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-emerald-950/40 text-emerald-200 border-emerald-600 success-pop";
-                document.getElementById('feedbackIcon').innerText = "🎉";
-                document.getElementById('feedbackTitle').innerText = "Harika! Doğru Yaptın.";
-                document.getElementById('feedbackMessage').innerText = currentQuestion.explanation;
-
-                setTimeout(() => {
-                    loadQuestion();
-                }, 2500);
-            } else {
-                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-amber-950/40 text-amber-200 border-amber-600 fade-in";
-                document.getElementById('feedbackIcon').innerText = "💡";
-                document.getElementById('feedbackTitle').innerText = "💪 Küçük bir hata oldu, sorun değil!";
-                document.getElementById('feedbackMessage').innerHTML = `Doğru cevap <b>${currentQuestion.answer}</b> olmalıydı.<br><br><b>Unutma ki:</b> ` + currentQuestion.explanation;
-            }
-
-            document.getElementById('nextBtn').onclick = () => {
-                loadQuestion();
-            };
-            document.getElementById('nextBtn').classList.add('fade-in');
-            document.getElementById('nextBtn').classList.remove('hidden');
-        }
-
-        initApp();
-    </script>
-</body>
-</html>
+                    encouragement = "👍 Gidişat gayet iyi, biraz daha dikkat
