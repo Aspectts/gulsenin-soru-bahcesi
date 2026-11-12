@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gülse'nin Soru Bahçesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .success-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0.95); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body id="pageBody" class="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4">
+
+    <!-- Gizli Veri Gönderim Formu ve Iframe (CORS ve Iframe Engelini Aşmak İçin) -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    <form id="sheetForm" action="https://script.google.com/macros/s/AKfycbxJY8XCu5fOOamo25oO5gqbtTruwonV88kh0SnLH4ZRtORxIfP87Nft00al856x6G-k/exec" method="POST" target="hidden_iframe" style="display:none;">
+        <input type="hidden" name="action" value="saveBatch">
+        <input type="hidden" name="payload" id="form_payload">
+        <input type="hidden" name="tarih" id="form_tarih">
+        <input type="hidden" name="kategori" id="form_kategori">
+        <input type="hidden" name="durum" id="form_durum">
+        <input type="hidden" name="seviye" id="form_seviye">
+        <input type="hidden" name="dogruSayisi" id="form_dogruSayisi">
+    </form>
+
+    <!-- Bulut durumunu Google E-Tablolar'a kaydetmek için ayrı form -->
+
+
+    <div id="mainContainer" class="w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300">
+        
+        <!-- Header & Theme Selector Bar -->
+        <div id="headerBox" class="p-5 text-white flex flex-col gap-3 shadow-md z-10 relative">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-wide">Gülse'nin Soru Bahçesi 🌸</h1>
+                    <p id="subTitle" class="text-xs sm:text-sm mt-1 opacity-90">YKS Hedefine Adım Adım</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Analiz Butonu -->
+                    <button onclick="toggleStatsModal()" title="İstatistikler & Analiz" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/45 transition shadow-sm border border-white/20">
+                        📊
+                    </button>
+                    <!-- Doğru Sayısı Kutusu -->
+                    <div id="scoreBox" class="text-right px-3 py-1.5 rounded-xl backdrop-blur-sm border">
+                        <div id="scoreLabel" class="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Doğru</div>
+                        <div class="text-xl sm:text-2xl font-bold font-mono text-center" id="scoreDisplay">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emojili Tema Seçim Butonları -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar justify-center sm:justify-start">
+                <span class="text-[11px] font-medium opacity-80 whitespace-nowrap mr-1">Tema:</span>
+                <button onclick="setTheme('bordo')" title="Bordo Gece" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🍷</button>
+                <button onclick="setTheme('yesil')" title="Gece Yeşili" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🌿</button>
+                <button onclick="setTheme('mor')" title="Gece Moru" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">💜</button>
+                <button onclick="setTheme('bebek')" title="Bebek Mavisi" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🍼</button>
+                <button onclick="setTheme('papatya')" title="Papatya Krem" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🌼</button>
+                <button onclick="setTheme('nane')" title="Nane Yeşili" class="w-9 h-9 rounded-xl text-base flex items-center justify-center bg-black/20 hover:bg-black/40 transition shadow-sm">🍃</button>
+            </div>
+        </div>
+
+        <!-- Difficulty Menu -->
+        <div id="menuBox" class="flex text-sm sm:text-base font-semibold shadow-inner border-b">
+            <button id="tab-kolay" onclick="setDifficulty('kolay')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4">Kolay</button>
+            <button id="tab-orta" onclick="setDifficulty('orta')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4 flex justify-center items-center gap-1.5 relative group">
+                Orta <span id="lock-orta" class="text-xs">🔒</span>
+                <div id="tooltip-orta" class="absolute -bottom-8 text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg pointer-events-none">100 Doğru Gerekli</div>
+            </button>
+            <button id="tab-zor" onclick="setDifficulty('zor')" class="flex-1 py-3 text-center transition-all duration-300 border-b-4 flex justify-center items-center gap-1.5 relative group">
+                Zor <span id="lock-zor" class="text-xs">🔒</span>
+                <div id="tooltip-zor" class="absolute -bottom-8 text-xs px-2 py-1 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg pointer-events-none">200 Doğru Gerekli</div>
+            </button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="contentBox" class="p-5 sm:p-6 flex-1 flex flex-col relative">
+            
+            <div class="flex justify-center mb-5">
+                <span id="categoryBadge" class="text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
+                    Kategori
+                </span>
+            </div>
+
+            <!-- Question Display -->
+            <div class="flex-1 flex items-center justify-center mb-6 min-h-[100px]">
+                <h2 id="questionText" class="text-3xl sm:text-4xl font-bold text-center tracking-wide drop-shadow-sm"></h2>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="optionsContainer" class="grid grid-cols-1 gap-3 mb-4"></div>
+
+            <!-- Feedback Area -->
+            <div id="feedbackArea" class="hidden rounded-2xl p-4 sm:p-5 mb-4 text-center shadow-inner border">
+                <div id="feedbackIcon" class="text-3xl mb-1 drop-shadow-md"></div>
+                <h3 id="feedbackTitle" class="font-bold text-lg mb-1"></h3>
+                <p id="feedbackMessage" class="text-sm sm:text-base leading-relaxed"></p>
+            </div>
+
+            <!-- Next Button -->
+            <button id="nextBtn" onclick="loadQuestion()" class="hidden w-full font-bold py-4 rounded-xl shadow-lg transition-transform transform active:scale-95 text-lg">
+                Sonraki Soruya Geç ➡️
+            </button>
+        </div>
+    </div>
+
+    <!-- İstatistik & Analiz Modalı -->
+    <div id="statsModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
+        <div id="modalContent" class="w-full max-w-md rounded-3xl p-6 shadow-2xl border flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h2 class="text-lg font-bold flex items-center gap-2">📊 Gülse'nin Performans Analizi</h2>
+                <button onclick="toggleStatsModal()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/10 font-bold hover:bg-black/20 transition">✕</button>
+            </div>
+            
+            <div id="statsBody" class="flex flex-col gap-4 text-sm">
+                <!-- İçerik -->
+            </div>
+
+            <button onclick="toggleStatsModal()" class="w-full py-3 rounded-xl font-bold text-white transition shadow-md" style="background-color: var(--header-bg, #722F37);">
+                Çalışmaya Devam Et 💪
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 30 cevap biriktir, tek istekte Google Sheets'e gönder.
+        // Bekleyen kayıtlar cihazda tutulur; sekme kapansa bile silinmez.
+        const BATCH_SIZE = 30;
+        const QUEUE_KEY = 'gulsen_pending_answers_v1';
+        let pendingAnswers = [];
+        try { pendingAnswers = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) {}
+        if (!Array.isArray(pendingAnswers)) pendingAnswers = [];
+        let batchSending = false;
+
+        function persistPendingAnswers() {
+            try { localStorage.setItem(QUEUE_KEY, JSON.stringify(pendingAnswers)); } catch(e) {}
+        }
+
+        function sendDataToSheet(category, durum, seviye, dogruSayisi) {
+            const now = new Date();
+            pendingAnswers.push({
+                id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random()),
+                tarih: now.toLocaleDateString('tr-TR') + ' ' + now.toLocaleTimeString('tr-TR'),
+                kategori: category, durum, seviye, dogruSayisi
+            });
+            persistPendingAnswers();
+            flushAnswerBatch();
+        }
+
+        function flushAnswerBatch() {
+            if (batchSending || pendingAnswers.length < BATCH_SIZE) return;
+            const batch = pendingAnswers.slice(0, BATCH_SIZE);
+            const iframe = document.getElementById('hidden_iframe');
+            const form = document.getElementById('sheetForm');
+            batchSending = true;
+            document.getElementById('form_payload').value = JSON.stringify(batch);
+
+            let timeout = setTimeout(() => finish(false), 20000);
+            function finish(ok) {
+                if (!batchSending) return;
+                clearTimeout(timeout);
+                iframe.removeEventListener('load', onLoad);
+                if (ok) {
+                    // Sunucunun yanıtı iframe üzerinden okunamaz; load yalnızca teslim denemesini gösterir.
+                    pendingAnswers.splice(0, batch.length);
+                    persistPendingAnswers();
+                }
+                batchSending = false;
+                if (ok && pendingAnswers.length >= BATCH_SIZE) flushAnswerBatch();
+            }
+            function onLoad() { finish(true); }
+            iframe.addEventListener('load', onLoad);
+            try { form.submit(); } catch(e) { finish(false); }
+        }
+        // Önceki oturumdan kalan tam paketleri yeni açılışta tekrar dene.
+        window.addEventListener('load', () => setTimeout(flushAnswerBatch, 1000));
+        window.addEventListener('online', flushAnswerBatch);
+
+        // Her cihaz kendi tarayıcısında bağımsız ilerleme saklar.
+        // Google Sheets'e yalnızca soru çözüm olayları gönderilir.
+
+        const memory = {
+            data: {},
+            save(key, value) {
+                this.data[key] = value;
+                try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {}
+            },
+            get(key, defaultValue) {
+                if (this.data[key] !== undefined) return this.data[key];
+                try {
+                    const val = localStorage.getItem(key);
+                    if (val !== null) {
+                        this.data[key] = JSON.parse(val);
+                        return this.data[key];
+                    }
+                } catch(e) {}
+                return defaultValue;
+            }
+        };
+
+        let currentScore = memory.get('gulsen_score_shared', 0);
+        let currentDifficulty = memory.get('gulsen_diff', 'kolay'); 
+        let currentTheme = memory.get('gulsen_theme', 'bordo');
+        let currentQuestion = memory.get('gulsen_last_question', null);
+        let isAnswered = false;
+
+        let stats = memory.get('gulsen_stats', {
+            "Temel İşlemler": { correct: 0, wrong: 0 },
+            "İşlem Önceliği": { correct: 0, wrong: 0 },
+            "Basit Denklemler": { correct: 0, wrong: 0 },
+            "Ortak Paydalı Kesirler": { correct: 0, wrong: 0 }
+        });
+
+        const themes = {
+            bordo: {
+                bg: '#121212', card: '#1E1E1E', headerBg: '#722F37', headerText: '#ffffff', subText: '#fecaca',
+                scoreBg: 'rgba(74, 22, 28, 0.6)', scoreText: '#fecaca', menuBg: '#1E1E1E', 
+                tabActive: '#722F37', tabInactive: '#a0a0a0', textMain: '#E0E0E0', 
+                badgeBg: '#262626', badgeText: '#fca5a5', badgeBorder: 'rgba(127, 29, 29, 0.4)',
+                btnBg: '#262626', btnBorder: '#404040', btnText: '#E0E0E0', 
+                btnHoverBg: '#2D2D2D', btnHoverBorder: '#722F37', pillBg: '#333333',
+                nextBg: '#722F37', nextHover: '#85363F', nextText: '#ffffff',
+                tooltipBg: '#262626', tooltipBorder: '#404040', tooltipText: '#ffffff'
+            },
+            yesil: {
+                bg: '#090D0B', card: '#121A16', headerBg: '#065F46', headerText: '#ffffff', subText: '#A7F3D0',
+                scoreBg: 'rgba(6, 95, 70, 0.6)', scoreText: '#A7F3D0', menuBg: '#121A16', 
+                tabActive: '#065F46', tabInactive: '#8A9A93', textMain: '#E2E8F0', 
+                badgeBg: '#1A2E26', badgeText: '#6EE7B7', badgeBorder: 'rgba(6, 95, 70, 0.4)',
+                btnBg: '#1A2E26', btnBorder: '#23382F', btnText: '#E2E8F0', 
+                btnHoverBg: '#22382F', btnHoverBorder: '#065F46', pillBg: '#23382F',
+                nextBg: '#065F46', nextHover: '#047857', nextText: '#ffffff',
+                tooltipBg: '#121A16', tooltipBorder: '#23382F', tooltipText: '#ffffff'
+            },
+            mor: {
+                bg: '#0B0910', card: '#15121F', headerBg: '#5B21B6', headerText: '#ffffff', subText: '#DDD6FE',
+                scoreBg: 'rgba(91, 33, 182, 0.6)', scoreText: '#DDD6FE', menuBg: '#15121F', 
+                tabActive: '#5B21B6', tabInactive: '#9CA3AF', textMain: '#F3F4F6', 
+                badgeBg: '#231D33', badgeText: '#C4B5FD', badgeBorder: 'rgba(91, 33, 182, 0.4)',
+                btnBg: '#231D33', btnBorder: '#31274A', btnText: '#F3F4F6', 
+                btnHoverBg: '#2D2342', btnHoverBorder: '#5B21B6', pillBg: '#31274A',
+                nextBg: '#5B21B6', nextHover: '#6D28D9', nextText: '#ffffff',
+                tooltipBg: '#15121F', tooltipBorder: '#31274A', tooltipText: '#ffffff'
+            },
+            bebek: {
+                bg: '#E0F2FE', card: '#FFFFFF', headerBg: '#1E3A8A', headerText: '#ffffff', subText: '#bae6fd',
+                scoreBg: 'rgba(30, 58, 138, 0.6)', scoreText: '#bae6fd', menuBg: '#f0f9ff', 
+                tabActive: '#1E3A8A', tabInactive: '#0369a1', textMain: '#0f172a', 
+                badgeBg: '#f0f9ff', badgeText: '#1e40af', badgeBorder: '#bae6fd',
+                btnBg: '#f0f9ff', btnBorder: '#bae6fd', btnText: '#0f172a', 
+                btnHoverBg: '#e0f2fe', btnHoverBorder: '#1E3A8A', pillBg: '#bae6fd',
+                nextBg: '#1E3A8A', nextHover: '#1d4ed8', nextText: '#ffffff',
+                tooltipBg: '#0f172a', tooltipBorder: '#1e3a8a', tooltipText: '#ffffff'
+            },
+            papatya: {
+                bg: '#FEF3C7', card: '#FFFFFF', headerBg: '#78350F', headerText: '#ffffff', subText: '#fde68a',
+                scoreBg: 'rgba(120, 53, 15, 0.6)', scoreText: '#fde68a', menuBg: '#fffbeb', 
+                tabActive: '#78350F', tabInactive: '#b45309', textMain: '#451a03', 
+                badgeBg: '#fffbeb', badgeText: '#78350F', badgeBorder: '#fde68a',
+                btnBg: '#fffbeb', btnBorder: '#fde68a', btnText: '#451a03', 
+                btnHoverBg: '#fef3c7', btnHoverBorder: '#78350F', pillBg: '#fde68a',
+                nextBg: '#78350F', nextHover: '#92400e', nextText: '#ffffff',
+                tooltipBg: '#451a03', tooltipBorder: '#78350F', tooltipText: '#ffffff'
+            },
+            nane: {
+                bg: '#ECFDF5', card: '#FFFFFF', headerBg: '#047857', headerText: '#ffffff', subText: '#a7f3d0',
+                scoreBg: 'rgba(4, 120, 87, 0.6)', scoreText: '#a7f3d0', menuBg: '#f0fdf4', 
+                tabActive: '#047857', tabInactive: '#059669', textMain: '#064e3b', 
+                badgeBg: '#f0fdf4', badgeText: '#064e3b', badgeBorder: '#a7f3d0',
+                btnBg: '#f0fdf4', btnBorder: '#a7f3d0', btnText: '#064e3b', 
+                btnHoverBg: '#ecfdf5', btnHoverBorder: '#047857', pillBg: '#a7f3d0',
+                nextBg: '#047857', nextHover: '#059669', nextText: '#ffffff',
+                tooltipBg: '#064e3b', tooltipBorder: '#047857', tooltipText: '#ffffff'
+            }
+        };
+
+        function setTheme(themeKey) {
+            currentTheme = themeKey;
+            memory.save('gulsen_theme', themeKey);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            let t = themes[currentTheme] || themes.bordo;
+            document.documentElement.style.setProperty('--header-bg', t.headerBg);
+            document.getElementById('pageBody').style.backgroundColor = t.bg;
+            
+            let container = document.getElementById('mainContainer');
+            container.style.backgroundColor = t.card;
+            container.style.borderColor = t.btnBorder;
+            container.style.borderWidth = '1px';
+
+            let header = document.getElementById('headerBox');
+            header.style.backgroundColor = t.headerBg;
+            header.style.color = t.headerText;
+            document.getElementById('subTitle').style.color = t.subText;
+
+            let scoreBox = document.getElementById('scoreBox');
+            scoreBox.style.backgroundColor = t.scoreBg;
+            scoreBox.style.borderColor = t.subText;
+            document.getElementById('scoreLabel').style.color = t.scoreText;
+            document.getElementById('scoreDisplay').style.color = t.headerText;
+
+            let menu = document.getElementById('menuBox');
+            menu.style.backgroundColor = t.menuBg;
+            menu.style.borderColor = t.btnBorder;
+
+            let badge = document.getElementById('categoryBadge');
+            badge.style.backgroundColor = t.badgeBg;
+            badge.style.color = t.badgeText;
+            badge.style.border = `1px solid ${t.badgeBorder}`;
+
+            document.getElementById('questionText').style.color = t.textMain;
+
+            let nextBtn = document.getElementById('nextBtn');
+            nextBtn.style.backgroundColor = t.nextBg;
+            nextBtn.style.color = t.nextText;
+
+            let modalContent = document.getElementById('modalContent');
+            modalContent.style.backgroundColor = t.card;
+            modalContent.style.borderColor = t.btnBorder;
+            modalContent.style.color = t.textMain;
+
+            updateUI();
+        }
+
+        function toggleStatsModal() {
+            let modal = document.getElementById('statsModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderStatsContent();
+            }
+        }
+
+        function renderStatsContent() {
+            let body = document.getElementById('statsBody');
+            body.innerHTML = '';
+
+            for (let cat in stats) {
+                let data = stats[cat];
+                let total = data.correct + data.wrong;
+                let rate = total > 0 ? Math.round((data.correct / total) * 100) : 100;
+
+                let encouragement = "";
+                let rateColor = "text-emerald-500 font-bold";
+
+                if (total === 0) {
+                    encouragement = "Henüz bu kategoride soru çözülmedi. Hadi başlayalım! 🌸";
+                    rateColor = "text-gray-400";
+                } else if (rate < 60) {
+                    if (cat === "Temel İşlemler") {
+                        encouragement = "✨ Gülse moralini bozma geleceğimiz için yapabilirsin ❤️ Biraz daha pratikle halledeceğiz!";
+                    } else {
+                        encouragement = "💪 Hiç sorun değil, üst üste deneyerek öğreneceğiz. Pes etmek yok!";
+                    }
+                    rateColor = "text-amber-500 font-bold";
+                } else if (rate < 80) {
+                    encouragement = "👍 Gidişat gayet iyi, biraz daha dikkatle mükemmel olacaksın!";
+                } else {
+                    encouragement = "🔥 Harika gidiyorsun! Bu konuyu kaptın bile.";
+                }
+
+                let div = document.createElement('div');
+                div.className = "p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col gap-1.5";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center font-semibold">
+                        <span>${cat}</span>
+                        <span class="${rateColor}">${total > 0 ? rate + '%' : 'Veri Yok'} (${data.correct} Doğru / ${data.wrong} Yanlış)</span>
+                    </div>
+                    <div class="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 transition-all duration-500" style="width: ${total > 0 ? rate : 0}%"></div>
+                    </div>
+                    <p class="text-xs opacity-90 mt-1 italic">${encouragement}</p>
+                `;
+                body.appendChild(div);
+            }
+        }
+
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function gcd(a, b) { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+
+        function genKolay() {
+            let a = getRandomInt(-20, 20), b = getRandomInt(-20, 20), add = Math.random() > 0.5;
+            let bStr = b < 0 ? `(${b})` : b, aStr = a < 0 ? `(${a})` : a;
+            return add ? { category: "Temel İşlemler", question: `${aStr} + ${bStr}`, answer: a + b, explanation: "Sayıları toplarken işaretlere dikkat etmelisin." }
+                       : { category: "Temel İşlemler", question: `${aStr} - ${bStr}`, answer: a - b, explanation: "Çıkarma işleminde eksi yan yana gelirse artıya dönüşür." };
+        }
+
+        function genOrta() {
+            if (Math.random() > 0.5) {
+                let a = getRandomInt(2, 9), b = getRandomInt(2, 9), c = getRandomInt(2, 9), add = Math.random() > 0.5;
+                return { category: "İşlem Önceliği", question: `${a} ${add ? '+' : '-'} ${b} x ${c}`, answer: add ? a + (b * c) : a - (b * c), explanation: "Önce her zaman çarpma veya bölme işlemi yapılır!" };
+            } else {
+                let a = getRandomInt(1, 20), b = getRandomInt(10, 40), plus = Math.random() > 0.5;
+                return { category: "Basit Denklemler", question: `x ${plus ? '+' : '-'} ${a} = ${b}`, answer: plus ? b - a : b + a, explanation: "x'i yalnız bırakmak için sayıyı karşı tarafa işaret değiştirerek at." };
+            }
+        }
+
+        function genZor() {
+            let denom = getRandomInt(3, 10), n1 = getRandomInt(1, 9), n2 = getRandomInt(1, 9), add = Math.random() > 0.5;
+            let ansNum = add ? n1 + n2 : n1 - n2;
+            let ansStr = `${ansNum}/${denom}`;
+            let g = gcd(ansNum, denom);
+            if (g === denom) ansStr = `${ansNum / denom}`;
+            else if (g > 1) ansStr = `${ansNum / g}/${denom / g}`;
+            return { category: "Ortak Paydalı Kesirler", question: `${n1}/${denom} ${add ? '+' : '-'} ${n2}/${denom}`, answer: ansStr, explanation: "Paydalar aynıysa alt taraf aynen yazılır, üstler toplanır veya çıkarılır." };
+        }
+
+        function generateOptions(correctAnswer) {
+            let opts = new Set([correctAnswer]);
+            if (typeof correctAnswer === 'string' && correctAnswer.includes('/')) {
+                let p = correctAnswer.split('/'), num = parseInt(p[0]), den = parseInt(p[1]);
+                opts.add(`${num}/${den * 2}`);
+                if (num > 0) opts.add(`-${num}/${den}`);
+                while (opts.size < 4) opts.add(`${num + getRandomInt(-2, 2)}/${den}`);
+            } else {
+                if (correctAnswer !== 0) opts.add(-correctAnswer);
+                while (opts.size < 4) opts.add(correctAnswer + getRandomInt(1, 5) * (Math.random() > 0.5 ? 1 : -1));
+            }
+            let fallback = 1;
+            while(opts.size < 4) opts.add(`Hata_${fallback++}`);
+            return Array.from(opts).sort(() => Math.random() - 0.5);
+        }
+
+        function initApp() {
+            applyTheme();
+            document.getElementById('scoreDisplay').innerText = currentScore;
+            updateUI();
+            
+            if (!currentQuestion) {
+                loadQuestion();
+            } else {
+                document.getElementById('categoryBadge').innerText = currentQuestion.category;
+                document.getElementById('questionText').innerText = currentQuestion.question;
+                renderOptions(currentQuestion);
+            }
+        }
+
+        function updateUI() {
+            let t = themes[currentTheme] || themes.bordo;
+            let lOrta = document.getElementById('lock-orta');
+            let lZor = document.getElementById('lock-zor');
+            
+            lOrta.classList.toggle('hidden', currentScore >= 100);
+            document.getElementById('tab-orta').classList.toggle('opacity-75', currentScore < 100);
+            lZor.classList.toggle('hidden', currentScore >= 200);
+            document.getElementById('tab-zor').classList.toggle('opacity-75', currentScore < 200);
+
+            ['kolay', 'orta', 'zor'].forEach(d => {
+                let btn = document.getElementById(`tab-${d}`);
+                if (d === currentDifficulty) {
+                    btn.style.borderBottomColor = t.headerBg;
+                    btn.style.color = t.textMain;
+                    btn.style.fontWeight = 'bold';
+                } else {
+                    btn.style.borderBottomColor = 'transparent';
+                    btn.style.color = t.tabInactive;
+                    btn.style.fontWeight = '600';
+                }
+            });
+
+            document.getElementById('tooltip-orta').style.backgroundColor = t.tooltipBg;
+            document.getElementById('tooltip-orta').style.borderColor = t.tooltipBorder;
+            document.getElementById('tooltip-orta').style.color = t.tooltipText;
+            document.getElementById('tooltip-zor').style.backgroundColor = t.tooltipBg;
+            document.getElementById('tooltip-zor').style.borderColor = t.tooltipBorder;
+            document.getElementById('tooltip-zor').style.color = t.tooltipText;
+        }
+
+        function setDifficulty(level) {
+            if (level === 'orta' && currentScore < 100) return alert("Bu seviye için 100 Doğruya ulaşmalısın! 🌸");
+            if (level === 'zor' && currentScore < 200) return alert("Bu seviye için 200 Doğruya ulaşmalısın! 💪");
+            currentDifficulty = level;
+            memory.save('gulsen_diff', level);
+            updateUI();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            let fa = document.getElementById('feedbackArea');
+            fa.classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            if (currentDifficulty === 'kolay') currentQuestion = genKolay();
+            else if (currentDifficulty === 'orta') currentQuestion = genOrta();
+            else if (currentDifficulty === 'zor') currentQuestion = genZor();
+
+            memory.save('gulsen_last_question', currentQuestion);
+
+            document.getElementById('categoryBadge').innerText = currentQuestion.category;
+            document.getElementById('questionText').innerText = currentQuestion.question;
+
+            renderOptions(currentQuestion);
+        }
+
+        function renderOptions(q) {
+            let t = themes[currentTheme] || themes.bordo;
+            const options = generateOptions(q.answer);
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D'];
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full border-2 font-semibold py-4 px-5 rounded-2xl flex items-center transition-all duration-200 text-lg shadow-sm group';
+                btn.style.backgroundColor = t.btnBg;
+                btn.style.borderColor = t.btnBorder;
+                btn.style.color = t.btnText;
+
+                btn.onmouseover = () => { btn.style.backgroundColor = t.btnHoverBg; btn.style.borderColor = t.headerBg; };
+                btn.onmouseout = () => { btn.style.backgroundColor = t.btnBg; btn.style.borderColor = t.btnBorder; };
+
+                btn.innerHTML = `
+                    <span class="rounded-full w-9 h-9 flex items-center justify-center mr-4 font-bold transition-colors" style="background-color: ${t.pillBg}; color: ${t.badgeText};">${labels[index]}</span> 
+                    <span class="flex-1 text-left">${opt}</span>
+                `;
+                btn.onclick = () => handleAnswer(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedAnswer, clickedBtn) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = (String(selectedAnswer) === String(currentQuestion.answer));
+            const cat = currentQuestion.category;
+            const durumStr = isCorrect ? "Doğru" : "Yanlış";
+
+            if (!stats[cat]) stats[cat] = { correct: 0, wrong: 0 };
+            if (isCorrect) {
+                stats[cat].correct++;
+                currentScore++;
+                memory.save('gulsen_score_shared', currentScore);
+                document.getElementById('scoreDisplay').innerText = currentScore;
+                updateUI();
+            } else {
+                stats[cat].wrong++;
+            }
+            memory.save('gulsen_stats', stats);
+
+            // Google E-Tabloya 30 cevapta bir toplu rapor gönderimi
+            sendDataToSheet(cat, durumStr, currentDifficulty, currentScore);
+
+            const allBtns = document.querySelectorAll('#optionsContainer button');
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.onmouseover = null; btn.onmouseout = null;
+                const btnText = btn.querySelectorAll('span')[1].innerText;
+                if (String(btnText) === String(currentQuestion.answer)) {
+                    btn.style.borderColor = '#16a34a'; btn.style.backgroundColor = 'rgba(22, 163, 74, 0.2)'; btn.style.color = '#86efac';
+                    btn.querySelectorAll('span')[0].style.backgroundColor = '#16a34a'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
+                } else if (btn === clickedBtn && !isCorrect) {
+                    btn.style.borderColor = '#d97706'; btn.style.backgroundColor = 'rgba(217, 119, 6, 0.2)'; btn.style.color = '#fde047';
+                    btn.querySelectorAll('span')[0].style.backgroundColor = '#d97706'; btn.querySelectorAll('span')[0].style.color = '#ffffff';
+                } else {
+                    btn.style.opacity = '0.4';
+                }
+            });
+
+            let fa = document.getElementById('feedbackArea');
+            fa.classList.remove('hidden');
+
+            if (isCorrect) {
+                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-emerald-950/40 text-emerald-200 border-emerald-600 success-pop";
+                document.getElementById('feedbackIcon').innerText = "🎉";
+                document.getElementById('feedbackTitle').innerText = "Harika! Doğru Yaptın.";
+                document.getElementById('feedbackMessage').innerText = currentQuestion.explanation;
+
+                setTimeout(() => {
+                    loadQuestion();
+                }, 2500);
+            } else {
+                fa.className = "rounded-2xl p-4 mb-4 text-center border bg-amber-950/40 text-amber-200 border-amber-600 fade-in";
+                document.getElementById('feedbackIcon').innerText = "💡";
+                document.getElementById('feedbackTitle').innerText = "💪 Küçük bir hata oldu, sorun değil!";
+                document.getElementById('feedbackMessage').innerHTML = `Doğru cevap <b>${currentQuestion.answer}</b> olmalıydı.<br><br><b>Unutma ki:</b> ` + currentQuestion.explanation;
+            }
+
+            document.getElementById('nextBtn').onclick = () => {
+                loadQuestion();
+            };
+            document.getElementById('nextBtn').classList.add('fade-in');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
